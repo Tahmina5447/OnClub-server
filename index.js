@@ -22,6 +22,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
     const userCollection = client.db("OnClub").collection("userCollection");
     const postCollection=client.db("OnClub").collection("postCollection");
+    const commentCollection=client.db("OnClub").collection("commentCollection");
     
     
 
@@ -31,6 +32,31 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
         res.send(result);
 
     })
+    app.post('/comments',async(req,res)=>{
+        const user=req.body;
+        const result=await commentCollection.insertOne(user);
+        res.send(result);
+
+    })
+
+
+    app.get('/commet',async(req,res)=>{
+      
+      let  query={};
+      
+      if(req.query.postId){
+        query={
+          postId:req.query.postId
+        }
+      }
+      
+      const cursor=commentCollection.find(query);
+      const review=await cursor.sort({_id:-1}).toArray();
+      console.log(review)
+      res.send(review);
+    })
+
+    
 
     app.post('/posts',async(req,res)=>{
         const post=req.body;
