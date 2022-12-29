@@ -22,7 +22,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
     const userCollection = client.db("OnClub").collection("userCollection");
     const postCollection=client.db("OnClub").collection("postCollection");
-    const profileCollection=client.db("OnClub").collection("profileCollection");
+    
     
 
     app.post('/users',async(req,res)=>{
@@ -63,30 +63,33 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
       
       app.put('/addLike/:id',async(req,res)=>{
         const id=req.params.id;
-        const status=req.body;
         const query={_id:ObjectId(id)}
+        const option={upsert:true}
         const updateLike={
-          $set:status
+          $inc:{
+            like:1
+          }
         }
-        const result = await postCollection.updateOne(query,updateLike);
+        const result = await postCollection.updateOne(query,updateLike,option);
         res.send(result);
       })
+      
 
-      app.put('/addComment/:id',async(req,res)=>{
-        const id=req.params.id;
-        const status=req.body;
-        console.log(status)
-        const query={_id:ObjectId(id)}
-        const addComment={
-          $set:[
-            {comments:status}
-          ]
+      // app.put('/addComment/:id',async(req,res)=>{
+      //   const id=req.params.id;
+      //   const status=req.body;
+      //   console.log(status)
+      //   const query={_id:ObjectId(id)}
+      //   const addComment={
+      //     $set:[
+      //       {comments:status}
+      //     ]
             
           
-        }
-        const result = await postCollection.updateOne(query,addComment);
-        res.send(result);
-      })
+      //   }
+      //   const result = await postCollection.updateOne(query,addComment);
+      //   res.send(result);
+      // })
 
       
 
